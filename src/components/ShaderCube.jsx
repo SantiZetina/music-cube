@@ -1,7 +1,6 @@
 import {
   Shader,
   Form3D,
-  GridDistortion,
   Plasma,
   Strands,
   StudioBackground,
@@ -48,20 +47,12 @@ export default function ShaderEffect({ strandsSpeed = 0 }) {
         }}
         shape3dType="box"
         speed={2.5}>
-        <Strands
-          start={{
-            x: 0,
-            y: 1
-          }}
-          visible={false} />
         <Plasma />
         <Strands
           amplitude={2.7}
           frequency={1.7}
           lineCount={18}
           speed={strandsSpeed} />
-        <GridDistortion
-          visible={true} />
       </Form3D>
     </Shader>
   )

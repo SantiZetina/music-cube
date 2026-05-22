@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/drive-proxy/:id", "destination": "/api/drive-proxy/[id]" }
+  ]
+}

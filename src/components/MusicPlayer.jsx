@@ -76,7 +76,7 @@ function SkipIcon({ forward }) {
 }
 
 export default function MusicPlayer({
-  isPlaying, trackName, volume, currentTime, duration, error,
+  isPlaying, trackName, volume, currentTime, duration,
   onFileLoad, onPlayPause, onVolumeChange, onSeek, onSkip, onOpenLibrary,
 }) {
   const fileInputRef = useRef(null)
@@ -154,20 +154,6 @@ export default function MusicPlayer({
       width: 'min(420px, 90vw)',
       boxSizing: 'border-box',
     }}>
-
-      {/* Error row */}
-      {error && (
-        <div style={{
-          color: 'rgba(255, 100, 100, 0.9)',
-          fontSize: '0.7rem',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          letterSpacing: '0.02em',
-          padding: '0.25rem 0',
-          userSelect: 'text',
-        }}>
-          {error}
-        </div>
-      )}
 
       {/* Progress row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>

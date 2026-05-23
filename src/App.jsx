@@ -13,6 +13,7 @@ export default function App() {
   const [volume, setVolume] = useState(1)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
+  const [audioError, setAudioError] = useState(null)
 
   function loadAudio(url, name, storageKey) {
     if (audioRef.current) {
@@ -21,9 +22,29 @@ export default function App() {
     }
     progressKeyRef.current = storageKey || null
     lastSaveRef.current = 0
+    setAudioError(null)
 
     const audio = new Audio(url)
     audio.volume = volume
+
+    audio.onerror = async () => {
+      let msg = 'Failed to load audio'
+      try {
+        const r = await fetch(url, { headers: { Range: 'bytes=0-0' } })
+        if (!r.ok) {
+          if (r.status === 404) msg = `HTTP 404 — proxy endpoint not found (routing broken)`
+          else if (r.status === 403) msg = `HTTP 403 — access denied (file not publicly shared on Drive)`
+          else if (r.status === 502) msg = `HTTP 502 — proxy failed to reach Google Drive`
+          else msg = `HTTP ${r.status} error from proxy`
+        } else {
+          msg = 'Audio failed to decode (unsupported format?)'
+        }
+      } catch (e) {
+        msg = `Network error: ${e.message}`
+      }
+      setAudioError(msg)
+      setIsPlaying(false)
+    }
 
     audio.onloadedmetadata = () => {
       if (storageKey) {
@@ -100,6 +121,7 @@ export default function App() {
         volume={volume}
         currentTime={currentTime}
         duration={duration}
+        error={audioError}
         onFileLoad={handleFileLoad}
         onPlayPause={handlePlayPause}
         onVolumeChange={handleVolumeChange}

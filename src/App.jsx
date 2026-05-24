@@ -1,15 +1,29 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import ShaderCube from './components/ShaderCube'
+import AudioVisual from './components/AudioVisual'
 import MusicPlayer from './components/MusicPlayer'
 import Bookshelf from './components/Bookshelf'
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)')
+    const handler = (e) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+  return isMobile
+}
+
 export default function App() {
+  const isMobile = useIsMobile()
   const audioRef = useRef(null)
   const progressKeyRef = useRef(null)
   const lastSaveRef = useRef(0)
   const [showLibrary, setShowLibrary] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [trackName, setTrackName] = useState(null)
+  const [currentBook, setCurrentBook] = useState(null)
   const [volume, setVolume] = useState(1)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -73,12 +87,14 @@ export default function App() {
   }
 
   function handleFileLoad(file) {
+    setCurrentBook(null)
     loadAudio(URL.createObjectURL(file), file.name.replace(/\.[^.]+$/, ''), null)
   }
 
   function handleBookSelect(book) {
     if (!book.driveId) return
     const url = `/api/drive-proxy/${book.driveId}`
+    setCurrentBook(book)
     loadAudio(url, book.title, book.driveId)
     setShowLibrary(false)
   }
@@ -114,7 +130,10 @@ export default function App() {
 
   return (
     <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100dvh', background: '#000' }}>
-      <ShaderCube strandsSpeed={isPlaying ? 0.5 : 0} isPlaying={isPlaying} />
+      {isMobile
+        ? <AudioVisual isPlaying={isPlaying} book={currentBook} />
+        : <ShaderCube strandsSpeed={isPlaying ? 0.5 : 0} isPlaying={isPlaying} />
+      }
       <MusicPlayer
         isPlaying={isPlaying}
         trackName={trackName}

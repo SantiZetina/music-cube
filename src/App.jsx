@@ -113,8 +113,8 @@ export default function App() {
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100dvh' }}>
-      <ShaderCube strandsSpeed={isPlaying ? 0.5 : 0} />
+    <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100dvh', background: '#000' }}>
+      <ShaderCube strandsSpeed={isPlaying ? 0.5 : 0} isPlaying={isPlaying} />
       <MusicPlayer
         isPlaying={isPlaying}
         trackName={trackName}
